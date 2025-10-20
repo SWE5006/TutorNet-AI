@@ -4,20 +4,11 @@ from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
 from contextlib import asynccontextmanager
 
-
-# from src.api import conversation
 from src.core.utils.mcp_client_manager import initialize_mcp_client
-# from src.api.monitoring import trace_log_consumer
-
-# Import enhanced modules
 from src.core.utils.settings import get_settings, setup_logging
-from src.core.utils.exceptions import (
-    BaseApplicationError
-)
+from src.core.utils.exceptions import BaseApplicationError
 from src.core.utils.error_handling import ErrorHandler
-
 from src.core.utils.mcp_session_manager import mcp_session_manager
-
 from src.core.router import setup_router
 
 # Initialize settings and logging
@@ -39,9 +30,6 @@ async def lifespan(app: FastAPI):
     yield
     
     logger.info("Application shutdown: Cleaning up resources.")
-    
-    # Stop cache invalidation manager
-    # await cache_invalidation_manager.stop_processing()
     
     # Stop the trace log consumer
     if hasattr(app.state, 'consumer_task') and app.state.consumer_task:
@@ -113,8 +101,6 @@ langfuse_handler = None
 if settings.langfuse_enable:
     langfuse = Langfuse()
     langfuse_handler = CallbackHandler()
-else:
-    pass
 
 
 # Include API routers

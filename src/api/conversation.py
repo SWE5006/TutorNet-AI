@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Header, Request
+from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel, Field, constr
-from typing import Annotated, Optional, Dict, List, AsyncGenerator, Tuple, Any
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, List, AsyncGenerator, Tuple, Any
 from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.prebuilt import create_react_agent
@@ -15,10 +15,8 @@ from src.core.utils.system_prompts import (
     get_agent_system_prompt_for_workflow,
     get_regular_system_prompt_for_workflow
 )
-# from src.core.validation_service import validation_service
 
 import json
-import httpx
 import uuid
 import logging
 
@@ -31,7 +29,6 @@ logger = logging.getLogger(__name__)
 REQUEST_TIMEOUT = 30
 MAX_RETRIES = 2
 DEFAULT_TEMPERATURE = 0.7
-DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
 
 # Streaming response headers
 STREAMING_HEADERS = {
@@ -65,7 +62,6 @@ if settings.langfuse_enable:
         langfuse_handler = None
 else:
     logger.info("Langfuse tracing disabled")
-    pass
 
 # System prompts now managed in src/core/utils/system_prompts.py
 
@@ -470,35 +466,18 @@ async def conversation(
     Accepts both request body and headers.
     """
     try:
-        # Access headers from the request
-        print("📝 Authorization header:", authorization)
-        # SECURITY VALIDATION: Centralized validation service
-        # processed_message, validation_result = await validation_service.validate_and_process_message(
-        #     message=request.message,
-        #     session_id=request.session_id,
-        #     request_id=str(uuid.uuid4()),
-        #     endpoint_type="conversation"
-        # )
-
-        # Create a modified request with processed message
-        processed_request = ConversationRequest(
-            message=request.message,
-            tool_names=request.tool_names,
-            session_id=request.session_id,
-            temperature=request.temperature
-        )
-
-        llm_instance = _get_llm_instance(processed_request)
-        session_memory = _get_session_memory(processed_request.session_id)
-        messages = _prepare_messages(session_memory, processed_request.message, authorization)
+        
+        llm_instance = _get_llm_instance(request)
+        session_memory = _get_session_memory(request.session_id)
+        messages = _prepare_messages(session_memory, request.message, authorization)
 
         # Ensure tool_names is always a list, even if None is provided in the request
-        tool_names = processed_request.tool_names or []
+        tool_names = request.tool_names or []
 
         if tool_names:
-            return await _handle_tool_conversation(processed_request, llm_instance, session_memory, messages)
+            return await _handle_tool_conversation(request, llm_instance, session_memory, messages, request.workflow)
         else:
-            return await _handle_regular_conversation(processed_request, llm_instance, session_memory, messages)
+            return await _handle_regular_conversation(request, llm_instance, session_memory, messages, request.workflow)
     
     except HTTPException:
         raise
@@ -516,8 +495,7 @@ async def clear_memory(
     Clears the conversation memory for a specific session.
     Accepts both request body and headers.
     """
-    # Access headers from the request
-    print("📝 Authorization header:", authorization)
+    logger.debug(f"Authorization header provided: {bool(authorization)}")
     
     session_id = request.session_id
     if session_id in memory_by_session:
@@ -535,8 +513,6 @@ async def get_history(
     Retrieves the full conversation history for a specific session.
     Accepts both request body and headers.
     """
-    # Access headers from the request
-    print("📝 Authorization header:", authorization)
     
     session_id = request.session_id
     if session_id in memory_by_session:

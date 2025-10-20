@@ -41,7 +41,6 @@ class Settings(BaseSettings):
     graph_cache_max_size: int = 10
     agent_cache_max_size: int = 50
     cache_ttl: int = 3600  # Increased to 1 hour for better performance
-    # redis_cache_enabled: bool = True
     
     # Guardrails
     guardrails_config_path: str = "./config/guardrails"
@@ -86,7 +85,6 @@ class Settings(BaseSettings):
     
     # Message Validation Settings
     message_validation_enabled: bool = True
-    # pii_encryption_key: Optional[str] = None
     bomb_threat_detection_enabled: bool = True
     pii_detection_enabled: bool = True
     validation_log_level: str = "INFO"  # CRITICAL, HIGH, MEDIUM, LOW
