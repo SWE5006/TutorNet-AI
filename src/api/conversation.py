@@ -5,7 +5,12 @@ from typing import Optional, Dict, List, AsyncGenerator, Tuple, Any
 from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.prebuilt import create_react_agent
-from src.core.utils.mcp_client_manager import get_mcp_client
+from src.core.function_tools import (
+    wrap_get_couse_list_service,
+    wrap_get_couse_details_service,
+    wrap_place_order_service,
+    get_images_by_urls
+)
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from src.core.utils.settings import get_settings
@@ -169,8 +174,8 @@ def _get_langfuse_handler_with_trace(session_id: str, workflow: str, user_messag
         return langfuse_handler  # Fallback to basic handler
 
 
-def _prepare_messages(session_memory: ConversationBufferMemory, user_message: str, authorization: str) -> List[BaseMessage]:
-    """Prepare messages for LLM processing with authorization handling."""
+def _prepare_messages(session_memory: ConversationBufferMemory, user_message: str) -> List[BaseMessage]:
+    """Prepare messages for LLM processing."""
     # Get conversation history
     history = session_memory.chat_memory.messages
     messages = []
@@ -180,30 +185,44 @@ def _prepare_messages(session_memory: ConversationBufferMemory, user_message: st
         messages.append(message)
     
     # Add current user message
-    user_msg_content = user_message
-    if authorization:
-        user_msg_content += f" [Authorization: {authorization}]"
-    
-    messages.append(HumanMessage(content=user_msg_content))
+    messages.append(HumanMessage(content=user_message))
     
     return messages
 
 
-def _validate_and_get_tools(tool_names: List[str]) -> List[Any]:
+def _validate_and_get_tools(tool_names: List[str], authorization: str = None) -> List[Any]:
     """Validate requested tools and return available tools."""
     try:
-        _, mcp_tools = get_mcp_client()
+        # Create wrapper config with authorization token
+        wrapper_config = {"authorization": authorization or ""}
+        
+        # Map of available function tools
+        available_tools = {
+            "get_course_list": wrap_get_couse_list_service(wrapper_config),
+            "get_course_details": wrap_get_couse_details_service(wrapper_config),
+            "place_order": wrap_place_order_service(wrapper_config),
+            "get_images_by_urls": get_images_by_urls
+        }
+        
+        tools = []
+        missing_tools = []
+        
+        for tool_name in tool_names:
+            if tool_name in available_tools:
+                tools.append(available_tools[tool_name])
+            else:
+                missing_tools.append(tool_name)
+        
+        if missing_tools:
+            logger.error(f"Tools not found: {', '.join(missing_tools)}")
+            raise HTTPException(status_code=404, detail=f"Tools not found: {', '.join(missing_tools)}")
+        
+        return tools
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error(f"Failed to get MCP client or tools: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to load MCP tools: {e}")
-
-    tools = [t for t in mcp_tools if t.name in tool_names]
-    if len(tools) != len(tool_names):
-        missing_tools = set(tool_names) - set(t.name for t in tools)
-        logger.error(f"Tools not found: {', '.join(missing_tools)}")
-        raise HTTPException(status_code=404, detail=f"Tools not found: {', '.join(missing_tools)}")
-    
-    return tools
+        logger.error(f"Failed to get function tools: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to load function tools: {e}")
 
 
 def _create_react_agent(llm_instance, tools: List[Any], workflow: str = "general", session_id: str = None, user_message: str = None):
@@ -339,10 +358,10 @@ async def _create_regular_response_stream(
             _save_conversation_context(session_memory, user_message, full_response_content)
 
 
-async def _handle_tool_conversation(request: ConversationRequest, llm_instance, session_memory: ConversationBufferMemory, messages: List[BaseMessage]) -> StreamingResponse:
+async def _handle_tool_conversation(request: ConversationRequest, llm_instance, session_memory: ConversationBufferMemory, messages: List[BaseMessage], authorization: str = None) -> StreamingResponse:
     """Handle conversation with tools using ReAct agent."""
     logger.debug(f"Tools requested: {request.tool_names}")
-    tools = _validate_and_get_tools(request.tool_names)
+    tools = _validate_and_get_tools(request.tool_names, authorization)
     graph = _create_react_agent(llm_instance, tools, request.workflow, request.session_id, request.message)
     
     return StreamingResponse(
@@ -373,7 +392,7 @@ async def chat(
     try:
         llm_instance = _get_llm_instance(request)
         session_memory = _get_session_memory(request.session_id)
-        messages = _prepare_messages(session_memory, request.message, authorization)
+        messages = _prepare_messages(session_memory, request.message)
         
         # Ensure tool_names is always a list, even if None is provided in the request
         tool_names = request.tool_names or []
@@ -383,7 +402,7 @@ async def chat(
         if tool_names:
             # Handle conversation with tools using ReAct agent
             logger.debug(f"Tools requested: {tool_names}")
-            tools = _validate_and_get_tools(tool_names)
+            tools = _validate_and_get_tools(tool_names, authorization)
             logger.debug(f"Validated tools: {[t.name for t in tools]}")
             graph = _create_react_agent(llm_instance, tools, request.workflow or "chat", request.session_id, request.message)
             
@@ -468,13 +487,13 @@ async def conversation(
     try:
         llm_instance = _get_llm_instance(request)
         session_memory = _get_session_memory(request.session_id)
-        messages = _prepare_messages(session_memory, request.message, authorization)
+        messages = _prepare_messages(session_memory, request.message)
 
         # Ensure tool_names is always a list, even if None is provided in the request
         tool_names = request.tool_names or []
 
         if tool_names:
-            return await _handle_tool_conversation(request, llm_instance, session_memory, messages)
+            return await _handle_tool_conversation(request, llm_instance, session_memory, messages, authorization)
         else:
             return await _handle_regular_conversation(request, llm_instance, session_memory, messages)
     except HTTPException:

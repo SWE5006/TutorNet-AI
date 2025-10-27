@@ -47,6 +47,7 @@ class Settings(BaseSettings):
 
     # MCP
     mcp_url: str
+    service_api_url: str
 
     # Langfuse
     langfuse_enable: bool = False
