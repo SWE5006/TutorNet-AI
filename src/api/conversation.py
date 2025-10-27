@@ -150,7 +150,7 @@ def _get_langfuse_handler_with_trace(session_id: str, workflow: str, user_messag
     
     try:
         # Create a new trace for this conversation
-        trace = langfuse.trace(
+        trace = langfuse.api.trace(
             name=f"conversation_{workflow}",
             user_id=session_id,
             session_id=session_id,
@@ -466,7 +466,6 @@ async def conversation(
     Accepts both request body and headers.
     """
     try:
-        
         llm_instance = _get_llm_instance(request)
         session_memory = _get_session_memory(request.session_id)
         messages = _prepare_messages(session_memory, request.message, authorization)
@@ -475,10 +474,9 @@ async def conversation(
         tool_names = request.tool_names or []
 
         if tool_names:
-            return await _handle_tool_conversation(request, llm_instance, session_memory, messages, request.workflow)
+            return await _handle_tool_conversation(request, llm_instance, session_memory, messages)
         else:
-            return await _handle_regular_conversation(request, llm_instance, session_memory, messages, request.workflow)
-    
+            return await _handle_regular_conversation(request, llm_instance, session_memory, messages)
     except HTTPException:
         raise
     except Exception as e:
