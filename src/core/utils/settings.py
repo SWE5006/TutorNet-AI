@@ -21,7 +21,6 @@ class Settings(BaseSettings):
         extra="ignore"
     )
     
-    
     # API
     api_key: str
     api_prefix: str = ""
@@ -61,7 +60,8 @@ class Settings(BaseSettings):
 
     # OpenAI
     openai_api_key: Optional[str] = None
-    openai_model_name: str = None
+    llm_model_name: str = None
+    llm_visual_model_name: str = None
 
     # Debug mode
     debug_mode: bool = False

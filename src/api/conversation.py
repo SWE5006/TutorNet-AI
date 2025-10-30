@@ -6,10 +6,11 @@ from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.prebuilt import create_react_agent
 from src.core.function_tools import (
-    wrap_get_couse_list_service,
-    wrap_get_couse_details_service,
+    wrap_get_tutor_list_service,
+    wrap_get_course_list_service,
+    wrap_get_course_details_service,
     wrap_place_order_service,
-    get_images_by_urls
+    
 )
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
@@ -96,12 +97,17 @@ def _create_common_llm_params(request: ConversationRequest) -> Dict[str, Any]:
 
 def _create_qwen_openai_instance(request: ConversationRequest) -> ChatOpenAI:
     """Create Qwen OpenAI compatible instance with proper validation."""
-    if not (settings.qwen_openai_url and settings.openai_api_key and settings.openai_model_name):
+    if not (settings.qwen_openai_url and settings.openai_api_key and settings.llm_model_name):
         logger.error("Qwen OpenAI settings are incomplete")
         raise HTTPException(status_code=500, detail="Qwen OpenAI settings are incomplete.")
     
-    model_to_use = settings.openai_model_name
-    logger.debug(f"Initializing Qwen OpenAI LLM: {model_to_use}")
+    # Use visual model for censorship workflow, otherwise use regular model
+    if request.workflow == "censorship" and settings.llm_visual_model_name:
+        model_to_use = settings.llm_visual_model_name
+        logger.debug(f"Initializing Qwen OpenAI Visual LLM for censorship: {model_to_use}")
+    else:
+        model_to_use = settings.llm_model_name
+        logger.debug(f"Initializing Qwen OpenAI LLM: {model_to_use}")
 
     return ChatOpenAI(
         base_url=settings.qwen_openai_url,
@@ -113,12 +119,17 @@ def _create_qwen_openai_instance(request: ConversationRequest) -> ChatOpenAI:
 
 def _create_openai_instance(request: ConversationRequest) -> ChatOpenAI:
     """Create OpenAI instance with proper validation."""
-    if not (settings.openai_api_key and settings.openai_model_name):
+    if not (settings.openai_api_key and settings.llm_model_name):
         logger.error("OpenAI settings are incomplete")
         raise HTTPException(status_code=500, detail="OpenAI settings are incomplete.")
     
-    model_to_use = settings.openai_model_name
-    logger.debug(f"Initializing OpenAI LLM: {model_to_use}")
+    # Use visual model for censorship workflow, otherwise use regular model
+    if request.workflow == "censorship" and settings.llm_visual_model_name:
+        model_to_use = settings.llm_visual_model_name
+        logger.debug(f"Initializing OpenAI Visual LLM for censorship: {model_to_use}")
+    else:
+        model_to_use = settings.llm_model_name
+        logger.debug(f"Initializing OpenAI LLM: {model_to_use}")
 
     return ChatOpenAI(
         api_key=settings.openai_api_key,
@@ -198,10 +209,10 @@ def _validate_and_get_tools(tool_names: List[str], authorization: str = None) ->
         
         # Map of available function tools
         available_tools = {
-            "get_course_list": wrap_get_couse_list_service(wrapper_config),
-            "get_course_details": wrap_get_couse_details_service(wrapper_config),
+            "get_tutor_list": wrap_get_tutor_list_service(wrapper_config),
+            "get_course_list": wrap_get_course_list_service(wrapper_config),
+            "get_course_details": wrap_get_course_details_service(wrapper_config),
             "place_order": wrap_place_order_service(wrapper_config),
-            "get_images_by_urls": get_images_by_urls
         }
         
         tools = []

@@ -9,7 +9,29 @@ from src.core.utils.settings import get_settings
 # request_domain = os.environ['TUTORNET_API_URL']
 settings = get_settings()
 request_domain = settings.service_api_url
-def wrap_get_couse_list_service(wrapper_config : Dict[str, Any]):
+
+def wrap_get_tutor_list_service(wrapper_config : Dict[str, Any]):
+    @tool
+    def get_tutor_list(keyword: str) -> list:
+        """
+        Get the list of tutors based on keyword.
+
+        Args:
+            keyword (str): The keyword to search for.
+
+        Returns:
+            list: The list of tutors matching the keyword, including id, name.
+        """
+        try:
+            response = requests.get(f"{request_domain}/api/users/search?query={keyword}", 
+                                    headers={"Content-Type":"text","authorization":f"{wrapper_config['authorization']}"})
+            return response.json()
+        except Exception as e:
+            return f"Error: {e}"
+    return get_tutor_list
+
+
+def wrap_get_course_list_service(wrapper_config : Dict[str, Any]):
     @tool
     def get_course_list(keyword: str) -> list:
         """
@@ -22,8 +44,6 @@ def wrap_get_couse_list_service(wrapper_config : Dict[str, Any]):
             list: The list of courses matching the keyword, including id, title, description, image, rating, tutor, starting price etc.
         """
         try:
-            # print(f"Searching courses with keyword: {keyword,request_domain,authorization}")
-            #Wrapper config will contain the jwt token
             response = requests.get(f"{request_domain}/api/courses/search?query={keyword}", 
                                     headers={"Content-Type":"text","authorization":f"{wrapper_config['authorization']}"})
             return response.json()
@@ -33,7 +53,7 @@ def wrap_get_couse_list_service(wrapper_config : Dict[str, Any]):
 
 
 
-def wrap_get_couse_details_service(wrapper_config : Dict[str, Any]):
+def wrap_get_course_details_service(wrapper_config : Dict[str, Any]):
     @tool
     def get_course_details(course_id: str) -> object:
         """
@@ -74,52 +94,3 @@ def wrap_place_order_service(wrapper_config : Dict[str, Any]):
         except Exception as e:
             return f"Error: {e}"
     return place_order
-
-@tool
-def get_images_by_urls(urlList: list[str]) -> list[str]:
-    """
-    Get images by URLList.
-
-    Args:
-        urlList (list[str]): The list of image URLs.
-
-    Returns:
-        list[dict]: List of dicts with url, mime_type, and base64-encoded image data.
-
-    Example return:
-        [
-            {
-                "url": "https://...",
-                "mime_type": "image/png",
-                "base64": "iVBORw0KGgo..."
-            },
-            ...
-        ]
-    """
-    import base64
-    try:
-        images = []
-        for url in urlList:
-            try:
-                response = requests.get(url)
-                if response.status_code == 200:
-                    mime_type = response.headers.get("Content-Type", "application/octet-stream")
-                    b64 = base64.b64encode(response.content).decode("utf-8")
-                    images.append({
-                        "url": url,
-                        "mime_type": mime_type,
-                        "base64": b64
-                    })
-                else:
-                    images.append({
-                        "url": url,
-                        "error": f"HTTP {response.status_code}"
-                    })
-            except Exception as e:
-                images.append({
-                    "url": url,
-                    "error": str(e)
-                })
-        return images
-    except Exception as e:
-        return [{"error": str(e)}]
