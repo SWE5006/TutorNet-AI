@@ -10,11 +10,11 @@ from src.core.utils.settings import get_settings
 settings = get_settings()
 request_domain = settings.service_api_url
 
-def wrap_get_tutor_list_service(wrapper_config : Dict[str, Any]):
+def wrap_search_tutor_service(wrapper_config : Dict[str, Any]):
     @tool
-    def get_tutor_list(keyword: str) -> list:
+    def search_tutor(keyword: str) -> list:
         """
-        Get the list of tutors based on keyword.
+        Search for tutors based on keyword.
 
         Args:
             keyword (str): The keyword to search for.
@@ -28,14 +28,14 @@ def wrap_get_tutor_list_service(wrapper_config : Dict[str, Any]):
             return response.json()
         except Exception as e:
             return f"Error: {e}"
-    return get_tutor_list
+    return search_tutor
 
 
-def wrap_get_course_list_service(wrapper_config : Dict[str, Any]):
+def wrap_search_course_service(wrapper_config : Dict[str, Any]):
     @tool
-    def get_course_list(keyword: str) -> list:
+    def search_course(keyword: str) -> list:
         """
-        Get the list of courses.
+        Search for courses based on keyword.
 
         Args:
             keyword (str): The keyword to search for.
@@ -49,7 +49,28 @@ def wrap_get_course_list_service(wrapper_config : Dict[str, Any]):
             return response.json()
         except Exception as e:
             return f"Error: {e}"
-    return get_course_list
+    return search_course
+
+
+def wrap_get_course_by_userid_service(wrapper_config : Dict[str, Any]):
+    @tool
+    def get_course_by_userid(user_id: str) -> list:
+        """
+        Get courses by tutor user ID.
+
+        Args:
+            user_id (str): The user ID to get courses for.
+
+        Returns:
+            list: The list of courses matching the user ID, including id, title, description, image, rating, tutor, starting price etc.
+        """
+        try:
+            response = requests.get(f"{request_domain}/api/courses/{user_id}/list", 
+                                    headers={"Content-Type":"text","authorization":f"{wrapper_config['authorization']}"})
+            return response.json()
+        except Exception as e:
+            return f"Error: {e}"
+    return get_course_by_userid
 
 
 

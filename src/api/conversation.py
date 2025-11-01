@@ -2,12 +2,13 @@ from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, List, AsyncGenerator, Tuple, Any
-from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, SystemMessage, BaseMessage, ToolMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langgraph.prebuilt import create_react_agent
 from src.core.function_tools import (
-    wrap_get_tutor_list_service,
-    wrap_get_course_list_service,
+    wrap_search_tutor_service,
+    wrap_search_course_service,
+    wrap_get_course_by_userid_service,
     wrap_get_course_details_service,
     wrap_place_order_service,
     
@@ -209,8 +210,9 @@ def _validate_and_get_tools(tool_names: List[str], authorization: str = None) ->
         
         # Map of available function tools
         available_tools = {
-            "get_tutor_list": wrap_get_tutor_list_service(wrapper_config),
-            "get_course_list": wrap_get_course_list_service(wrapper_config),
+            "search_tutor": wrap_search_tutor_service(wrapper_config),
+            "search_course": wrap_search_course_service(wrapper_config),
+            "get_course_by_userid": wrap_get_course_by_userid_service(wrapper_config),
             "get_course_details": wrap_get_course_details_service(wrapper_config),
             "place_order": wrap_place_order_service(wrapper_config),
         }
@@ -283,6 +285,8 @@ async def _create_agent_response_stream(
 ) -> AsyncGenerator[str, None]:
     """Create streaming response for agent-based conversation."""
     full_response_content = ""
+    agent_messages = []  # Collect AIMessages with tool_calls and ToolMessages for memory
+    
     try:
         logger.debug(f"Starting agent stream with messages: {len(messages)}")
         
@@ -301,6 +305,17 @@ async def _create_agent_response_stream(
                 metadata = chunk[1] if len(chunk) > 1 else {}
                 
                 logger.debug(f"Processing message: {type(message)}, metadata: {metadata}")
+                
+                # Collect AIMessages with valid tool_calls and ToolMessages for memory
+                if isinstance(message, AIMessage) and hasattr(message, 'tool_calls') and message.tool_calls:
+                    # Only collect if tool_calls have valid name (not empty chunks)
+                    valid_tool_calls = [tc for tc in message.tool_calls if tc.get('name')]
+                    if valid_tool_calls:
+                        agent_messages.append(message)
+                        logger.debug(f"Collected AIMessage with {len(valid_tool_calls)} valid tool call(s)")
+                elif isinstance(message, ToolMessage):
+                    agent_messages.append(message)
+                    logger.debug(f"Collected ToolMessage: {message.content[:100]}...")
                 
                 # Check if this is an AI message chunk with content
                 if hasattr(message, 'content') and message.content:
@@ -332,6 +347,12 @@ async def _create_agent_response_stream(
     finally:
         if full_response_content:
             _save_conversation_context(session_memory, user_message, full_response_content)
+        
+        # Add agent messages (AIMessage with tool_calls and ToolMessages) to memory
+        if agent_messages:
+            logger.debug(f"Adding {len(agent_messages)} agent messages to memory")
+            for msg in agent_messages:
+                session_memory.chat_memory.add_message(msg)
 
 
 async def _create_regular_response_stream(
@@ -409,6 +430,7 @@ async def chat(
         tool_names = request.tool_names or []
         
         full_response = ""
+        agent_messages = []  # Collect AIMessages with tool_calls and ToolMessages for memory
         
         if tool_names:
             # Handle conversation with tools using ReAct agent
@@ -428,6 +450,17 @@ async def chat(
                 if isinstance(chunk, tuple) and len(chunk) >= 1:
                     message = chunk[0]
                     metadata = chunk[1] if len(chunk) > 1 else {}
+                    
+                    # Collect AIMessages with valid tool_calls and ToolMessages for memory
+                    if isinstance(message, AIMessage) and hasattr(message, 'tool_calls') and message.tool_calls:
+                        # Only collect if tool_calls have valid name (not empty chunks)
+                        valid_tool_calls = [tc for tc in message.tool_calls if tc.get('name')]
+                        if valid_tool_calls:
+                            agent_messages.append(message)
+                            logger.debug(f"Collected AIMessage with {len(valid_tool_calls)} valid tool call(s)")
+                    elif isinstance(message, ToolMessage):
+                        agent_messages.append(message)
+                        logger.debug(f"Collected ToolMessage: {message.content[:100]}...")
                     
                     # Check if this is an AI message chunk with content
                     if hasattr(message, 'content') and message.content:
@@ -461,6 +494,12 @@ async def chat(
         
         # Save conversation context
         _save_conversation_context(session_memory, request.message, full_response)
+        
+        # Add agent messages (AIMessage with tool_calls and ToolMessages) to memory if tools were used
+        if agent_messages:
+            logger.debug(f"Adding {len(agent_messages)} agent messages to memory")
+            for msg in agent_messages:
+                session_memory.chat_memory.add_message(msg)
         
         return {
             "session_id": request.session_id,
@@ -499,6 +538,8 @@ async def conversation(
         llm_instance = _get_llm_instance(request)
         session_memory = _get_session_memory(request.session_id)
         messages = _prepare_messages(session_memory, request.message)
+
+        logger.debug(f"Request session_id: {request.session_id}")
 
         # Ensure tool_names is always a list, even if None is provided in the request
         tool_names = request.tool_names or []
