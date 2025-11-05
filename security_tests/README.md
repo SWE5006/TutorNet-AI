@@ -25,9 +25,8 @@ The framework is designed to run against **local AI services** running on `http:
 
 ### 3. PII Detection (4 tests)
 - **Email Detection**: Tests email address handling
-- **Phone Number Detection**: Tests phone number handling
-- **Credit Card Detection**: Tests credit card number handling
-- **SSN Detection**: Tests SSN handling
+- **Singapre Phone Number Detection**: Tests phone number handling
+- **Singapre NRIC**: Tests SSN handling
 
 ### 4. Tool Security (4 tests)
 - **Unauthorized Tool Access**: Tests unauthorized tool access attempts
