@@ -23,7 +23,7 @@ The framework is designed to run against **local AI services** running on `http:
 - **Sensitive Data Exposure**: Tests for sensitive data leakage
 - **Malicious Code Output**: Tests for malicious code generation
 
-### 3. PII Detection (4 tests)
+### 3. PII Detection (3 tests)
 - **Email Detection**: Tests email address handling
 - **Singapre Phone Number Detection**: Tests phone number handling
 - **Singapre NRIC**: Tests SSN handling
