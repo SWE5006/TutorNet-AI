@@ -1,0 +1,37 @@
+name: Tests (Poetry + Coverage HTML)
+on:
+  push:
+    branches: [ "feat/unit-test" ]
+  pull_request:
+    branches: [ "feat/unit-test" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: install poetry
+        run: pip install -U pip poetry
+        
+      - name: install dependecies
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction --no-root
+          
+      - name: Run tests (HTML coverage)
+        run: |
+          poetry run pytest --cov=src --cov-report=html:htmlcov
+          rm -rf site && mkdir -p site/coverage
+          cp -r htmlcov/* site/coverage/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
