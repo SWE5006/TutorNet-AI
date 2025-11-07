@@ -13,6 +13,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Prepare .env
+        run: cp .env.example .env   
+        
       - name: install poetry
         run: pip install -U pip poetry
         
