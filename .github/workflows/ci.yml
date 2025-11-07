@@ -41,6 +41,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-      
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+          
+      # comment for a while, need to set the repo to public
+      #- name: Deploy to GitHub Pages
+        #uses: actions/deploy-pages@v4
