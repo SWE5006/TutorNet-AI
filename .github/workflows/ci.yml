@@ -33,14 +33,15 @@ jobs:
           
       - name: Run tests (HTML coverage)
         run: |
-          poetry run pytest --cov=src --cov-report=html:htmlcov
-          rm -rf site && mkdir -p site/coverage
-          cp -r htmlcov/* site/coverage/
+          poetry run pytest --cov=src --cov-report=term-missing --disable-warnings
+          #poetry run pytest --cov=src --cov-report=html:htmlcov
+          #rm -rf site && mkdir -p site/coverage
+          #cp -r htmlcov/* site/coverage/
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
+      #- name: Upload Pages artifact
+      #  uses: actions/upload-pages-artifact@v3
+      #  with:
+      #    path: site
           
       # comment for a while, need to set the repo to public
       #- name: Deploy to GitHub Pages
