@@ -42,7 +42,7 @@ app = FastAPI(
 #Add health check
 @app.get("/healthz")
 def health_check():
-    return {"status": "ok-cicd-demo"}
+    return {"status": "This is for cicd-demo"}
 
 # Add error handling middleware
 @app.exception_handler(BaseApplicationError)
