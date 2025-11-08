@@ -39,6 +39,10 @@ app = FastAPI(
     redirect_slashes=False
 )
 
+#Add health check
+@app.get("/healthz")
+def health_check():
+    return {"status": "ok"}
 
 # Add error handling middleware
 @app.exception_handler(BaseApplicationError)
