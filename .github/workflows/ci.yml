@@ -46,3 +46,26 @@ jobs:
       # comment for a while, need to set the repo to public
       #- name: Deploy to GitHub Pages
         #uses: actions/deploy-pages@v4
+  scan:
+    runs-on: ubuntu-latest
+    needs: test          
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install poetry
+      - run: poetry install
+      - name: Install scanning tools
+        run: |
+          pip install ruff bandit semgrep
+
+
+      - name: Ruff (lint)
+        run: ruff check .
+
+      - name: Bandit (security scan)
+        run: bandit -r src || true
+
+      - name: Semgrep (SAST)
+        run: semgrep scan --config auto || true
