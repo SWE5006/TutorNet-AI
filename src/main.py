@@ -4,11 +4,9 @@ from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
 from contextlib import asynccontextmanager
 
-from src.core.utils.mcp_client_manager import initialize_mcp_client
 from src.core.utils.settings import get_settings, setup_logging
 from src.core.utils.exceptions import BaseApplicationError
 from src.core.utils.error_handling import ErrorHandler
-from src.core.utils.mcp_session_manager import mcp_session_manager
 from src.core.router import setup_router
 
 # Initialize settings and logging
@@ -19,13 +17,9 @@ logger = setup_logging(settings)
 async def lifespan(app: FastAPI):
     """
     FastAPI lifespan context manager for application start and shutdown events.
-    Initializes the MCP client on start and starts/stops the trace log consumer.
     """
     logger.info("Application start: Initializing services.")
     
-    # Initialize MCP client
-    await initialize_mcp_client()
-
     logger.info("Application started.")
     yield
     
@@ -35,8 +29,6 @@ async def lifespan(app: FastAPI):
     if hasattr(app.state, 'consumer_task') and app.state.consumer_task:
         app.state.consumer_task.cancel()
         await app.state.consumer_task
-    
-    await mcp_session_manager.cleanup_all_sessions()
 
 # Initialize FastAPI app
 app = FastAPI(
