@@ -3197,58 +3197,6 @@ beartype = ">=0.22.2"
 typing-extensions = ">=4.15.0"
 
 [[package]]
-name = "py-key-value-aio"
-version = "0.2.8"
-description = "Async Key-Value"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "py_key_value_aio-0.2.8-py3-none-any.whl", hash = "sha256:561565547ce8162128fd2bd0b9d70ce04a5f4586da8500cce79a54dfac78c46a"},
-    {file = "py_key_value_aio-0.2.8.tar.gz", hash = "sha256:c0cfbb0bd4e962a3fa1a9fa6db9ba9df812899bd9312fa6368aaea7b26008b36"},
-]
-
-[package.dependencies]
-beartype = ">=0.22.2"
-cachetools = {version = ">=6.0.0", optional = true, markers = "extra == \"memory\""}
-diskcache = {version = ">=5.6.0", optional = true, markers = "extra == \"disk\""}
-keyring = {version = ">=25.6.0", optional = true, markers = "extra == \"keyring\""}
-pathvalidate = {version = ">=3.3.1", optional = true, markers = "extra == \"disk\""}
-py-key-value-shared = "0.2.8"
-
-[package.extras]
-disk = ["diskcache (>=5.6.0)", "pathvalidate (>=3.3.1)"]
-dynamodb = ["aioboto3 (>=13.3.0)", "types-aiobotocore-dynamodb (>=2.16.0)"]
-elasticsearch = ["aiohttp (>=3.12)", "elasticsearch (>=9.0.0)"]
-keyring = ["keyring (>=25.6.0)"]
-keyring-linux = ["dbus-python (>=1.4.0)", "keyring (>=25.6.0)"]
-memcached = ["aiomcache (>=0.8.0)"]
-memory = ["cachetools (>=6.0.0)"]
-mongodb = ["pymongo (>=4.15.0)"]
-pydantic = ["pydantic (>=2.11.9)"]
-redis = ["redis (>=4.3.0)"]
-rocksdb = ["rocksdict (>=0.3.0)"]
-valkey = ["valkey-glide (>=2.1.0)"]
-vault = ["hvac (>=2.3.0)", "types-hvac (>=2.3.0)"]
-wrappers-encryption = ["cryptography (>=45.0.0)"]
-
-[[package]]
-name = "py-key-value-shared"
-version = "0.2.8"
-description = "Shared Key-Value"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "py_key_value_shared-0.2.8-py3-none-any.whl", hash = "sha256:aff1bbfd46d065b2d67897d298642e80e5349eae588c6d11b48452b46b8d46ba"},
-    {file = "py_key_value_shared-0.2.8.tar.gz", hash = "sha256:703b4d3c61af124f0d528ba85995c3c8d78f8bd3d2b217377bd3278598070cc1"},
-]
-
-[package.dependencies]
-beartype = ">=0.22.2"
-typing-extensions = ">=4.15.0"
-
-[[package]]
 name = "pycodestyle"
 version = "2.14.0"
 description = "Python style guide checker"
@@ -3432,14 +3380,14 @@ typing-extensions = ">=4.14.1"
 
 [[package]]
 name = "pydantic-settings"
-version = "2.11.0"
+version = "2.12.0"
 description = "Settings management using Pydantic"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "pydantic_settings-2.11.0-py3-none-any.whl", hash = "sha256:fe2cea3413b9530d10f3a5875adffb17ada5c1e1bab0b2885546d7310415207c"},
-    {file = "pydantic_settings-2.11.0.tar.gz", hash = "sha256:d0e87a1c7d33593beb7194adb8470fc426e95ba02af83a0f23474a04c9a08180"},
+    {file = "pydantic_settings-2.12.0-py3-none-any.whl", hash = "sha256:fddb9fd99a5b18da837b29710391e945b1e30c135477f484084ee513adb93809"},
+    {file = "pydantic_settings-2.12.0.tar.gz", hash = "sha256:005538ef951e3c2a68e1c08b292b5f2e71490def8589d4221b95dab00dafcfd0"},
 ]
 
 [package.dependencies]
