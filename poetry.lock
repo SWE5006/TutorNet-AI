@@ -3197,58 +3197,6 @@ beartype = ">=0.22.2"
 typing-extensions = ">=4.15.0"
 
 [[package]]
-name = "py-key-value-aio"
-version = "0.2.8"
-description = "Async Key-Value"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "py_key_value_aio-0.2.8-py3-none-any.whl", hash = "sha256:561565547ce8162128fd2bd0b9d70ce04a5f4586da8500cce79a54dfac78c46a"},
-    {file = "py_key_value_aio-0.2.8.tar.gz", hash = "sha256:c0cfbb0bd4e962a3fa1a9fa6db9ba9df812899bd9312fa6368aaea7b26008b36"},
-]
-
-[package.dependencies]
-beartype = ">=0.22.2"
-cachetools = {version = ">=6.0.0", optional = true, markers = "extra == \"memory\""}
-diskcache = {version = ">=5.6.0", optional = true, markers = "extra == \"disk\""}
-keyring = {version = ">=25.6.0", optional = true, markers = "extra == \"keyring\""}
-pathvalidate = {version = ">=3.3.1", optional = true, markers = "extra == \"disk\""}
-py-key-value-shared = "0.2.8"
-
-[package.extras]
-disk = ["diskcache (>=5.6.0)", "pathvalidate (>=3.3.1)"]
-dynamodb = ["aioboto3 (>=13.3.0)", "types-aiobotocore-dynamodb (>=2.16.0)"]
-elasticsearch = ["aiohttp (>=3.12)", "elasticsearch (>=9.0.0)"]
-keyring = ["keyring (>=25.6.0)"]
-keyring-linux = ["dbus-python (>=1.4.0)", "keyring (>=25.6.0)"]
-memcached = ["aiomcache (>=0.8.0)"]
-memory = ["cachetools (>=6.0.0)"]
-mongodb = ["pymongo (>=4.15.0)"]
-pydantic = ["pydantic (>=2.11.9)"]
-redis = ["redis (>=4.3.0)"]
-rocksdb = ["rocksdict (>=0.3.0)"]
-valkey = ["valkey-glide (>=2.1.0)"]
-vault = ["hvac (>=2.3.0)", "types-hvac (>=2.3.0)"]
-wrappers-encryption = ["cryptography (>=45.0.0)"]
-
-[[package]]
-name = "py-key-value-shared"
-version = "0.2.8"
-description = "Shared Key-Value"
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "py_key_value_shared-0.2.8-py3-none-any.whl", hash = "sha256:aff1bbfd46d065b2d67897d298642e80e5349eae588c6d11b48452b46b8d46ba"},
-    {file = "py_key_value_shared-0.2.8.tar.gz", hash = "sha256:703b4d3c61af124f0d528ba85995c3c8d78f8bd3d2b217377bd3278598070cc1"},
-]
-
-[package.dependencies]
-beartype = ">=0.22.2"
-typing-extensions = ">=4.15.0"
-
-[[package]]
 name = "pycodestyle"
 version = "2.14.0"
 description = "Python style guide checker"
@@ -4120,15 +4068,15 @@ files = [
 
 [[package]]
 name = "secretstorage"
-version = "3.4.0"
+version = "3.4.1"
 description = "Python bindings to FreeDesktop.org Secret Service API"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 markers = "sys_platform == \"linux\""
 files = [
-    {file = "secretstorage-3.4.0-py3-none-any.whl", hash = "sha256:0e3b6265c2c63509fb7415717607e4b2c9ab767b7f344a57473b779ca13bd02e"},
-    {file = "secretstorage-3.4.0.tar.gz", hash = "sha256:c46e216d6815aff8a8a18706a2fbfd8d53fcbb0dce99301881687a1b0289ef7c"},
+    {file = "secretstorage-3.4.1-py3-none-any.whl", hash = "sha256:c55d57b4da3de568d8c3af89dad244ab24c35ca1da8625fc1b550edf005ebc41"},
+    {file = "secretstorage-3.4.1.tar.gz", hash = "sha256:a799acf5be9fb93db609ebaa4ab6e8f1f3ed5ae640e0fa732bfea59e9c3b50e8"},
 ]
 
 [package.dependencies]
