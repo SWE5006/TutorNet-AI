@@ -73,29 +73,29 @@ TutorNet-AI is a production-ready agentic AI platform designed to provide intell
 
 \`\`\`
 ┌─────────────────────────────────────────────────────────────┐
-│                        FastAPI Application                   │
+│ FastAPI Application │
 ├─────────────────────────────────────────────────────────────┤
-│  API Layer                                                   │
-│  ├── Conversation Endpoints (chat, streaming, management)   │
-│  ├── Request/Response Models                                │
-│  └── Error Handling Middleware                              │
+│ API Layer │
+│ ├── Conversation Endpoints (chat, streaming, management) │
+│ ├── Request/Response Models │
+│ └── Error Handling Middleware │
 ├─────────────────────────────────────────────────────────────┤
-│  Core Layer                                                  │
-│  ├── LLM Factory (OpenAI, Qwen support)                    │
-│  ├── Memory Manager (Session-based conversation history)   │
-│  ├── Tool Registry (Dynamic tool loading)                  │
-│  └── System Prompts (Workflow-specific templates)          │
+│ Core Layer │
+│ ├── LLM Factory (OpenAI, Qwen support) │
+│ ├── Memory Manager (Session-based conversation history) │
+│ ├── Tool Registry (Dynamic tool loading) │
+│ └── System Prompts (Workflow-specific templates) │
 ├─────────────────────────────────────────────────────────────┤
-│  Agent Layer                                                 │
-│  ├── ReAct Agent (Tool-calling with LangGraph)             │
-│  ├── Reflection Graph (Quality validation & improvement)   │
-│  └── State Management                                       │
+│ Agent Layer │
+│ ├── ReAct Agent (Tool-calling with LangGraph) │
+│ ├── Reflection Graph (Quality validation & improvement) │
+│ └── State Management │
 ├─────────────────────────────────────────────────────────────┤
-│  Utilities                                                   │
-│  ├── Langfuse Config (Tracing & observability)             │
-│  ├── Error Handling (Structured exception handling)        │
-│  ├── Logging Config (Security & application logs)          │
-│  └── Settings (Environment-based configuration)            │
+│ Utilities │
+│ ├── Langfuse Config (Tracing & observability) │
+│ ├── Error Handling (Structured exception handling) │
+│ ├── Logging Config (Security & application logs) │
+│ └── Settings (Environment-based configuration) │
 └─────────────────────────────────────────────────────────────┘
 \`\`\`
 
@@ -103,9 +103,9 @@ TutorNet-AI is a production-ready agentic AI platform designed to provide intell
 
 \`\`\`
 User Query → LLM Response → Validation Node
-                              ├── APPROVED → Return Response
-                              ├── REJECT → Regeneration Node → New Response
-                              └── Auto-Approve Errors → Return Error Message
+├── APPROVED → Return Response
+├── REJECT → Regeneration Node → New Response
+└── Auto-Approve Errors → Return Error Message
 \`\`\`
 
 ---
@@ -115,34 +115,34 @@ User Query → LLM Response → Validation Node
 \`\`\`
 TutorNet-AI/
 ├── src/
-│   ├── api/
-│   │   └── conversation.py          # API endpoints for conversations
-│   ├── core/
-│   │   ├── function_tools.py        # Tool definitions and registry
-│   │   ├── logging_config.py        # Logging configuration
-│   │   ├── router.py                # API router setup
-│   │   └── utils/
-│   │       ├── agents/
-│   │       │   ├── react_agent.py   # ReAct agent implementation
-│   │       │   └── reflection_graph.py  # Reflection agent graph
-│   │       ├── api_utils.py         # API utility functions
-│   │       ├── error_handling.py    # Error handlers and middleware
-│   │       ├── langfuse_config.py   # Langfuse tracing setup
-│   │       ├── llm_factory.py       # LLM instance creation
-│   │       ├── memory_manager.py    # Session memory management
-│   │       ├── models.py            # Pydantic models
-│   │       ├── settings.py          # Configuration settings
-│   │       ├── streaming_handlers.py # SSE streaming handlers
-│   │       └── system_prompts.py    # System prompt templates
-│   └── main.py                      # FastAPI application entry
+│ ├── api/
+│ │ └── conversation.py # API endpoints for conversations
+│ ├── core/
+│ │ ├── function_tools.py # Tool definitions and registry
+│ │ ├── logging_config.py # Logging configuration
+│ │ ├── router.py # API router setup
+│ │ └── utils/
+│ │ ├── agents/
+│ │ │ ├── react_agent.py # ReAct agent implementation
+│ │ │ └── reflection_graph.py # Reflection agent graph
+│ │ ├── api_utils.py # API utility functions
+│ │ ├── error_handling.py # Error handlers and middleware
+│ │ ├── langfuse_config.py # Langfuse tracing setup
+│ │ ├── llm_factory.py # LLM instance creation
+│ │ ├── memory_manager.py # Session memory management
+│ │ ├── models.py # Pydantic models
+│ │ ├── settings.py # Configuration settings
+│ │ ├── streaming_handlers.py # SSE streaming handlers
+│ │ └── system_prompts.py # System prompt templates
+│ └── main.py # FastAPI application entry
 ├── tests/
-│   ├── conftest.py                  # Pytest fixtures
-│   ├── test_conversation.py         # Conversation tests
-│   ├── test_conversation_endpoints.py # Endpoint integration tests
-│   ├── test_reflection_graph.py     # Reflection agent tests
-│   └── [additional test files]
-├── pyproject.toml                   # Project dependencies & config
-└── README.md                        # This file
+│ ├── conftest.py # Pytest fixtures
+│ ├── test_conversation.py # Conversation tests
+│ ├── test_conversation_endpoints.py # Endpoint integration tests
+│ ├── test_reflection_graph.py # Reflection agent tests
+│ └── [additional test files]
+├── pyproject.toml # Project dependencies & config
+└── README.md # This file
 \`\`\`
 
 ---
@@ -168,14 +168,16 @@ TutorNet-AI/
 
    \`\`\`bash
    python -m venv .venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   source .venv/bin/activate # On Windows: .venv\Scripts\activate
    \`\`\`
 
 3. **Install dependencies**
 
    \`\`\`bash
    pip install -e .
+
    # or using poetry
+
    poetry install
    \`\`\`
 
@@ -183,7 +185,9 @@ TutorNet-AI/
 
    \`\`\`bash
    cp .env.example .env
+
    # Edit .env with your configuration
+
    \`\`\`
 
    Required variables:
@@ -202,20 +206,27 @@ TutorNet-AI/
 ### Development Server
 
 \`\`\`bash
+
 # Using uvicorn directly
+
 uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 
 # Or using the VS Code task
+
 # Run Task: "Start TutorNet-AI Development Server"
+
 \`\`\`
 
 ### Production Deployment
 
 \`\`\`bash
+
 # Using gunicorn with uvicorn workers
+
 gunicorn src.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 
 # Using Docker (if Dockerfile is available)
+
 docker build -t tutornet-ai .
 docker run -p 8000:8000 --env-file .env tutornet-ai
 \`\`\`
@@ -224,13 +235,13 @@ docker run -p 8000:8000 --env-file .env tutornet-ai
 
 \`\`\`bash
 curl -X POST "http://localhost:8000/foundation/api/conversation/chat" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "session_id": "test-session",
-    "message": "Hello, how can you help me?",
-    "workflow": "assistant",
-    "temperature": 0.7
-  }'
+-H "Content-Type: application/json" \\
+-d '{
+"session_id": "test-session",
+"message": "Hello, how can you help me?",
+"workflow": "assistant",
+"temperature": 0.7
+}'
 \`\`\`
 
 ---
@@ -246,30 +257,30 @@ POST /chat
 Content-Type: application/json
 
 {
-  "session_id": "unique-session-id",
-  "message": "Your question here",
-  "workflow": "assistant",
-  "temperature": 0.7,
-  "tool_names": ["search_courses"],
-  "reflection": true
+"session_id": "unique-session-id",
+"message": "Your question here",
+"workflow": "assistant",
+"temperature": 0.7,
+"tool_names": ["search_courses"],
+"reflection": true
 }
 \`\`\`
 
 **Response:**
 \`\`\`json
 {
-  "session_id": "unique-session-id",
-  "message": "Your question here",
-  "response": "AI response here",
-  "workflow": "assistant",
-  "temperature": 0.7,
-  "tool_names": ["search_courses"],
-  "reflection": {
-    "improved": true,
-    "original_response": "...",
-    "improved_response": "...",
-    "reflection_notes": "..."
-  }
+"session_id": "unique-session-id",
+"message": "Your question here",
+"response": "AI response here",
+"workflow": "assistant",
+"temperature": 0.7,
+"tool_names": ["search_courses"],
+"reflection": {
+"improved": true,
+"original_response": "...",
+"improved_response": "...",
+"reflection_notes": "..."
+}
 }
 \`\`\`
 
@@ -280,9 +291,9 @@ POST /
 Content-Type: application/json
 
 {
-  "session_id": "unique-session-id",
-  "message": "Your question here",
-  "workflow": "assistant"
+"session_id": "unique-session-id",
+"message": "Your question here",
+"workflow": "assistant"
 }
 \`\`\`
 
@@ -295,7 +306,7 @@ POST /clear_memory
 Content-Type: application/json
 
 {
-  "session_id": "session-to-clear"
+"session_id": "session-to-clear"
 }
 \`\`\`
 
@@ -306,15 +317,15 @@ POST /get_history
 Content-Type: application/json
 
 {
-  "session_id": "session-id"
+"session_id": "session-id"
 }
 \`\`\`
 
 **Response:**
 \`\`\`json
 {
-  "session_id": "session-id",
-  "history": "Human: Hello\\nAI: Hi there!..."
+"session_id": "session-id",
+"history": "Human: Hello\\nAI: Hi there!..."
 }
 \`\`\`
 
@@ -325,13 +336,17 @@ Content-Type: application/json
 ### Run All Tests
 
 \`\`\`bash
+
 # Run all tests with coverage
+
 pytest tests/ --cov=src --cov-report=html --cov-report=term
 
 # Run specific test file
+
 pytest tests/test_conversation_endpoints.py -v
 
 # Run with coverage report
+
 pytest tests/ --cov=src --cov-report=term-missing
 \`\`\`
 
@@ -352,13 +367,17 @@ Current test coverage: **91%**
 ### Code Quality
 
 \`\`\`bash
+
 # Format code
+
 black src/
 
 # Check code quality
+
 flake8 src/
 
 # Type checking (if configured)
+
 mypy src/
 \`\`\`
 
@@ -368,16 +387,16 @@ mypy src/
 
 ### Environment Variables
 
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| \`OPENAI_API_KEY\` | OpenAI API key | - | Yes |
-| \`OPENAI_MODEL_NAME\` | Model to use | \`gpt-4-turbo-preview\` | No |
-| \`QWEN_ENABLE\` | Enable Qwen models | \`false\` | No |
-| \`LANGFUSE_ENABLE\` | Enable Langfuse tracing | \`false\` | No |
-| \`LANGFUSE_PUBLIC_KEY\` | Langfuse public key | - | If enabled |
-| \`LANGFUSE_SECRET_KEY\` | Langfuse secret key | - | If enabled |
-| \`LOG_LEVEL\` | Logging level | \`INFO\` | No |
-| \`CORS_ORIGINS\` | Allowed CORS origins | \`http://localhost:3000\` | No |
+| Variable                | Description             | Default                   | Required   |
+| ----------------------- | ----------------------- | ------------------------- | ---------- |
+| \`OPENAI_API_KEY\`      | OpenAI API key          | -                         | Yes        |
+| \`OPENAI_MODEL_NAME\`   | Model to use            | \`gpt-4-turbo-preview\`   | No         |
+| \`QWEN_ENABLE\`         | Enable Qwen models      | \`false\`                 | No         |
+| \`LANGFUSE_ENABLE\`     | Enable Langfuse tracing | \`false\`                 | No         |
+| \`LANGFUSE_PUBLIC_KEY\` | Langfuse public key     | -                         | If enabled |
+| \`LANGFUSE_SECRET_KEY\` | Langfuse secret key     | -                         | If enabled |
+| \`LOG_LEVEL\`           | Logging level           | \`INFO\`                  | No         |
+| \`CORS_ORIGINS\`        | Allowed CORS origins    | \`http://localhost:3000\` | No         |
 
 ### Workflow Types
 
@@ -406,11 +425,11 @@ The project includes pre-configured VS Code tasks:
 \`\`\`python
 @tool
 def my_new_tool(param: str) -> str:
-    """Tool description for the LLM."""
-    # Implementation
-    return result
+"""Tool description for the LLM.""" # Implementation
+return result
 
 # Register the tool
+
 available_tools["my_new_tool"] = my_new_tool
 \`\`\`
 
@@ -431,21 +450,25 @@ Your specialized system prompt here...
 ## 🔧 Technology Stack
 
 ### Core Framework
+
 - **FastAPI**: Modern, high-performance web framework
 - **Uvicorn**: ASGI server for async Python
 - **Pydantic**: Data validation using Python type hints
 
 ### AI & LLM
+
 - **LangChain**: LLM application framework
 - **LangGraph**: Graph-based agent orchestration
 - **OpenAI**: GPT models for conversation
 - **Qwen**: Alternative LLM support
 
 ### Observability & Monitoring
+
 - **Langfuse**: LLM tracing and observability
 - **Python Logging**: Structured logging with security filters
 
 ### Testing & Quality
+
 - **pytest**: Testing framework
 - **pytest-cov**: Coverage reporting
 - **pytest-asyncio**: Async test support
@@ -454,6 +477,7 @@ Your specialized system prompt here...
 - **flake8**: Code linting
 
 ### Storage & State
+
 - **LangChain Memory**: Conversation history management
 - **In-memory Sessions**: Fast session-based state
 
@@ -479,6 +503,7 @@ Your specialized system prompt here...
 ### Commit Convention
 
 Follow conventional commits:
+
 - \`feat:\` New features
 - \`fix:\` Bug fixes
 - \`docs:\` Documentation changes
@@ -490,21 +515,23 @@ Follow conventional commits:
 
 ## 📝 License
 
-This project is part of the SWE5007 Capstone Project at Singapore Institute of Technology.
+This project is part of the SWE5008 Architecting AI Systems Practice Project at NUS-ISS
 
 ---
 
 ## 👥 Authors
 
-- **Project Team**: SWE5006/TutorNet-AI
-- **Course**: SWE5007 Capstone & Internship Project for SE32
-- **Institution**: Singapore Institute of Technology
+- **Project Team**: SWE5008/TutorNet-AI
+- **Team Members**: Zhang Kaidi, Fang Ziyue, Li Jiayu, Liu Yikai
+- **Course**: SWE5008 Architecting AI Systems Practice Project for SE32
+- **Institution**: NUS-ISS
 
 ---
 
 ## 📞 Support
 
 For issues, questions, or contributions, please:
+
 - Open an issue on GitHub
 - Contact the development team
 - Refer to the documentation in \`/docs\` (if available)
