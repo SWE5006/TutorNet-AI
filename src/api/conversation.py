@@ -33,8 +33,8 @@ memory_by_session: Dict[str, ConversationBufferMemory] = {}
 logger = logging.getLogger(__name__)
 
 # Constants
-REQUEST_TIMEOUT = 30
-MAX_RETRIES = 2
+REQUEST_TIMEOUT = 60  # Increased timeout for international network access
+MAX_RETRIES = 3  # Increased retries for better reliability
 DEFAULT_TEMPERATURE = 0.7
 
 # Streaming response headers
