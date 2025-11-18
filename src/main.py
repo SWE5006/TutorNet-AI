@@ -4,14 +4,19 @@ from langfuse import Langfuse
 from langfuse.langchain import CallbackHandler
 from contextlib import asynccontextmanager
 
+from src.core.utils.secure_secrets import load_secret_into_env
 from src.core.utils.settings import get_settings, setup_logging
 from src.core.utils.exceptions import BaseApplicationError
 from src.core.utils.error_handling import ErrorHandler
 from src.core.router import setup_router
 
+
+print("[src.main] imported, creating app")
+
 # Initialize settings and logging
 settings = get_settings()
 logger = setup_logging(settings)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,7 +24,7 @@ async def lifespan(app: FastAPI):
     FastAPI lifespan context manager for application start and shutdown events.
     """
     logger.info("Application start: Initializing services.")
-    
+
     logger.info("Application started.")
     yield
     
@@ -39,10 +44,13 @@ app = FastAPI(
     redirect_slashes=False
 )
 
+
+
 #Add health check
 @app.get("/foundation/healthz")
 def health_check():
-    return {"status": "This is for cicd-demo"}
+    key = load_secret_into_env()
+    return {"status": "This is for cicd-demo","key_tail": len(key) if key else 0}
 
 # Add error handling middleware
 @app.exception_handler(BaseApplicationError)

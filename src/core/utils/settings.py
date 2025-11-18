@@ -8,6 +8,7 @@ from typing import Optional
 from pydantic import field_validator, ConfigDict
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from src.core.utils.secure_secrets import load_secret_into_env
 
 logger = logging.getLogger(__name__)
 
@@ -127,8 +128,18 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     """Get cached settings instance."""
+    app_env = os.getenv("APP_ENV","local")
+    # Use SSM to overide env var
+    try:
+        if app_env == "local":
+            load_secret_into_env(force=True)   # overwrite .env in local
+            logger.info("Overwrite the local env")
+        else:
+            load_secret_into_env(force=False)  # only set if missing in prod
+    except Exception as e:
+        logger.warning(f"Failed to load OPENAI_API_KEY from SSM: {e}")
+
     settings = Settings()
-    
     return settings
 
 
