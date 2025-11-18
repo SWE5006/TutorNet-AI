@@ -31,6 +31,7 @@ dependencies = [
     "fastapi (>=0.118.0,<0.119.0)",
     "langfuse (>=3.6.1,<4.0.0)",
     "langchain-openai (>=0.3.27,<0.4.0)",
+    "boto3 (>=1.40.75,<2.0.0)",
 ]
 
 [tool.poetry]
