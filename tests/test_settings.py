@@ -39,14 +39,14 @@ class TestSettings:
         
     def test_settings_temperature_constants(self):
         """Test that temperature constants are within valid range"""
-        from src.api.conversation import DEFAULT_TEMPERATURE
+        from src.core.utils.models import DEFAULT_TEMPERATURE
         
         assert DEFAULT_TEMPERATURE >= 0.0
         assert DEFAULT_TEMPERATURE <= 1.0
         
     def test_settings_timeout_values(self):
         """Test timeout configuration values"""
-        from src.api.conversation import REQUEST_TIMEOUT, MAX_RETRIES
+        from src.core.utils.models import REQUEST_TIMEOUT, MAX_RETRIES
         
         assert REQUEST_TIMEOUT > 0
         assert MAX_RETRIES >= 0

@@ -52,11 +52,15 @@ class TestSystemPrompts:
         assert len(prompt) > 0
         
     def test_get_system_prompt_unknown_workflow(self):
-        """Test system prompt for unknown workflow - currently raises error (bug in source)"""
-        # Note: This test reveals a bug in the source code where WorkflowType.GENERAL doesn't exist
-        # The except block in get_system_prompt_for_workflow tries to use it
-        with pytest.raises(AttributeError):
-            get_system_prompt_for_workflow("unknown_workflow")
+        """Test system prompt for unknown workflow returns default (assistant)"""
+        # The function now defaults to assistant prompt instead of raising error
+        prompt = get_system_prompt_for_workflow("unknown_workflow")
+        
+        # Should return the assistant workflow prompt as default
+        assistant_prompt = get_system_prompt_for_workflow("assistant")
+        assert prompt == assistant_prompt
+        assert isinstance(prompt, str)
+        assert len(prompt) > 0
         
     def test_get_agent_system_prompt_assistant(self):
         """Test agent system prompt for assistant workflow"""
