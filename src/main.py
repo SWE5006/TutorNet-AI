@@ -50,7 +50,7 @@ app = FastAPI(
 @app.get("/foundation/healthz")
 def health_check():
     key = load_secret_into_env()
-    return {"status": "This is for cicd-demo","key_tail": len(key) if key else 0}
+    return {"status": "Live. This is for cicd-demo video recording","key_tail": len(key) if key else 0}
 
 # Add error handling middleware
 @app.exception_handler(BaseApplicationError)
