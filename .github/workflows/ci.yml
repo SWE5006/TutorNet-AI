@@ -80,13 +80,14 @@ jobs:
           context: .
           push: false
           load: true
+          tags: ci-scan-image:latest
           target: builder
 
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@0.18.0
         continue-on-error: true
         with:
-          image-ref: 'ci-test-image:latest'
+          image-ref: 'ci-scan-image:latest'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
