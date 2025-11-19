@@ -24,6 +24,8 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock* ./
 
+RUN poetry self add poetry-plugin-export
+
 RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 RUN pip wheel --wheel-dir=/wheels -r requirements.txt
